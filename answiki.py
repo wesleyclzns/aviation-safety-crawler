@@ -8,6 +8,9 @@ class AnsWikiSpider(scrapy.Spider):
     def parse(self, response):
         #Pega a informação dos acidentes
         yield{
+
+            'ano': response.css('font+ a ::text').get(),
+
             #ID, data e horario
             'idWiki': response.css('.pagetitle::text').get(),
             'dataOcorencia': response.css('.caption+ .caption ::text').get(),
@@ -31,6 +34,7 @@ class AnsWikiSpider(scrapy.Spider):
 
             #Informações sobre a localização do incidente
             'localizacao': response.css('tr:nth-child(11) .desc ::text').get(),
+            'pais': response.css('img+ a ::text').get(),
             'coordenadas': response.css('br+ iframe').attrib['src'][53:],
             'aeroportoOrigem': response.css('tr:nth-child(14) .desc ::text').get(),
             'aeroportoDestino': response.css('tr:nth-child(15) .desc ::text').get(),
