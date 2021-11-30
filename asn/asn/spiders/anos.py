@@ -7,14 +7,14 @@ class AnsWikiSpider(scrapy.Spider):
     start_urls = ['https://aviation-safety.net/wikibase/']
     
     def parse(self, response):
-        #Pega a informação dos acidentes
         
+        #Pega os anos 
         anos=[]
         anos1 = int(response.css('font+ a ::text').get())
         anos2 = response.css('a+ a ::text').getall()
         anos3 = response.css('br+ a ::text').getall()
         
-        
+        #Coloca em uma lista
         anos.append(anos1)
 
         for ano in anos2:
@@ -24,23 +24,38 @@ class AnsWikiSpider(scrapy.Spider):
             anos.append(ano) 
 
         urlPrincipal = 'https://aviation-safety.net'
-        urlHome = 'https://aviation-safety.net/wikibase'
-        urlBaseAno = '/dblist.php?Year='
+        urlHome = urlPrincipal + '/wikibase'
+        urlBaseAno = 'dblist.php?Year='
         urlPagina = '&sorteer=datekey&page='
-        urlCasosAno = urljoin(urlHome, urlBaseAno)
+        urlCasosAno = urlHome + urlBaseAno
 
+        #listas de link dos anos
+        urlAnos = []
+        #lista de link dos casos
+        urlCasos = []
+
+
+        #Pega o numero do ano e coloca no link "https://aviation-safety.net/wikibase/dblist.php?Year=" e faz uma lista
         for ano in anos:
-            urlAno = (urlCasosAno + str(ano))
+            urlAno = response.url + urlBaseAno + str(ano)
             urlAnos.append(urlAno)
-            
-            for linkAno in urlAnos:
-                start_urls = [linkAno]
 
+            #Entra em cada um dos link da lista de url dos anos 
+            for linkAno in urlAnos:
+                scrapy.Request(linkAno)
+                
+                #Pega o link de cada caso/incidente
                 casos = response.css('.nobr a ::attr(href)').getall()
 
                     for caso in casos:
                         urlCaso = (urlPrincipal + str(caso))
                         urlCasos.append(urlCaso)
+
+                paginas= response.css('.pagenumbers a ::attr(href)').getall()
+
+                    for pagina in paginas:
+                        pagina = pagina[10:-1]
+                        
 
                         for linkCaso in urlCasos:
                             start_urls = [linkAno]
