@@ -21,6 +21,13 @@ class AnsWikiSpider(scrapy.Spider):
         #Lista de link das paginas
         urlPaginas = []
 
+        ### DECLARAÇÃO DE LINKS
+        urlPrincipal = 'https://aviation-safety.net'
+        urlHome = urlPrincipal + '/wikibase'
+        urlBaseAno = 'dblist.php?Year='
+        urlPagina = '&sorteer=datekey&page='
+        urlCasosAno = urlHome + urlBaseAno
+
         #Pega os anos 
         anos1 = int(response.css('font+ a ::text').get())
         anos2 = response.css('a+ a ::text').getall()
@@ -35,11 +42,6 @@ class AnsWikiSpider(scrapy.Spider):
         for ano in anos3:
             anos.append(ano) 
 
-        urlPrincipal = 'https://aviation-safety.net'
-        urlHome = urlPrincipal + '/wikibase'
-        urlBaseAno = 'dblist.php?Year='
-        urlPagina = '&sorteer=datekey&page='
-        urlCasosAno = urlHome + urlBaseAno
 
         #Pega o numero do ano e coloca no link "https://aviation-safety.net/wikibase/dblist.php?Year=" e faz uma lista
         for ano in anos:
@@ -71,17 +73,19 @@ class AnsWikiSpider(scrapy.Spider):
                 if paginas:
                     for urlpg in urlPaginas:
                         scrapy.Request(urlpg)
-
                         casosDasOutrasPaginas = response.css('.nobr a ::attr(href)').getall()
 
                         #Trata o link do caso e coloca na lista de url dos casos
-                        for caso in casosDasOutrasPaginas:
-                            urlDoCaso = urlPrincipal + str(caso)
-                            urlCasos.append(urlDoCaso)
-
-                    #Entra em cada link na lista de casos
+                        for novoCaso in casosDasOutrasPaginas:
+                            urlNovoCaso = urlPrincipal + str(novoCaso)
+                            urlCasos.append(urlNovoCaso)
+                
+                
+                #Entra em cada link na lista de casos
                 for linkCaso in urlCasos:
-                    start_urls = [linkAno]
+                    print('Estou no linkCaso')
+                    scrapy.Request(linkCaso)
+                    
                     #Solicita os dados do caso
                     yield{
                         "ano": ano,
@@ -111,3 +115,4 @@ class AnsWikiSpider(scrapy.Spider):
                         'aeroportoDestino': response.css('tr:nth-child(15) .desc ::text').get(),
                         'narativa': response.css('br+ span ::text').get(),
                         }
+        # return dicionarioDados
