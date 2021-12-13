@@ -42,7 +42,7 @@ class AnsWikiSpider(scrapy.Spider):
         for ano in anos3:
             anos.append(ano) 
 
-
+        anosTeste = [1996]
         #Pega o numero do ano e coloca no link "https://aviation-safety.net/wikibase/dblist.php?Year=" e faz uma lista
         for ano in anos:
             urlAno = response.url + urlBaseAno + str(ano)
@@ -64,7 +64,7 @@ class AnsWikiSpider(scrapy.Spider):
                     urlCasos.append(urlCaso)
 
                 #Trata o link da pagina 
-                for pagina in paginas:
+                """ for pagina in paginas:
                     pagina = pagina[10:]
                     urldapagina = (response.url + pagina)
                     urlPaginas.append(urldapagina)
@@ -79,7 +79,7 @@ class AnsWikiSpider(scrapy.Spider):
                         for novoCaso in casosDasOutrasPaginas:
                             urlNovoCaso = urlPrincipal + str(novoCaso)
                             urlCasos.append(urlNovoCaso)
-                
+                 """
                 
                 #Entra em cada link na lista de casos
                 for linkCaso in urlCasos:
